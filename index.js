@@ -25,7 +25,17 @@ async function run() {
     const database = client.db("HireLoop");
     const jobsCollection = database.collection("jobs");
     const companiesCollection = database.collection("companies");
+    const usersCollection = database.collection("user");
+    const applicationsCollection = database.collection("applications");
 
+    // users api
+    app.get('/api/users', async (req, res) => {
+      const cursor = usersCollection.find({});
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+
+    // jobs api
     app.get('/api/jobs', async (req, res) => {
         const query = {};
         if(req.query.companyId){
@@ -53,6 +63,17 @@ async function run() {
         createdAt: new Date()
       }
       const result = await jobsCollection.insertOne(newJob);
+      res.send(result);
+    });
+
+    // applications api
+    app.post('/api/applications', async (req, res) => {
+      const application = req.body;
+      const newApplication = {
+        ...application,
+        createdAt: new Date()
+      };
+      const result = await applicationsCollection.insertOne(newApplication);
       res.send(result);
     });
 

@@ -28,6 +28,7 @@ async function run() {
     const usersCollection = database.collection("user");
     const applicationsCollection = database.collection("applications");
     const plansCollection = database.collection("plans")
+    const subscriptionCollection = database.collection("subscription")
 
     // users api
     app.get('/api/users', async (req, res) => {
@@ -125,6 +126,27 @@ async function run() {
       }
       const plan = await plansCollection.findOne(query)
       res.send(plan)
+    })
+
+    // subscription
+    app.post('/api/subscriptions',async(req,res)=>{
+      const data = req.body
+      const subInfo={
+        ...data,
+        createdAt: new Date()
+      }
+      const result = await subscriptionCollection.insertOne(subInfo)
+
+      // update plan info 
+      const filter={email:data.email}
+      const updateDocument = {
+        $set:{
+          plan: data.planId
+        }
+      }
+      const updateResult = await usersCollection.updateOne(filter,updateDocument)
+      
+      res.send(updateResult)
     })
 
     // Send a ping to confirm a successful connection

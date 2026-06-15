@@ -27,6 +27,7 @@ async function run() {
     const companiesCollection = database.collection("companies");
     const usersCollection = database.collection("user");
     const applicationsCollection = database.collection("applications");
+    const plansCollection = database.collection("plans")
 
     // users api
     app.get('/api/users', async (req, res) => {
@@ -115,6 +116,16 @@ async function run() {
       const result = await companiesCollection.insertOne(newCompany);
       res.send(result);
     });
+
+    // plans
+    app.get('/api/plans',async(req,res) =>{
+      const query = {}
+      if(req.query.plan_id){
+        query.plan_id = req.query.plan_id
+      }
+      const plan = await plansCollection.findOne(query)
+      res.send(plan)
+    })
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });

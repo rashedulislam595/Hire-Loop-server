@@ -118,6 +118,19 @@ async function run() {
       res.send(result);
     });
 
+    app.patch('/api/companies/:id',async(req,res)=>{
+      const id = req.params.id
+      const companyData = req.body;
+      const filter = {_id: new ObjectId(id)};
+      const updateDoc = {
+        $set:{
+          status: companyData.status
+        }
+      }
+      const result = await companiesCollection.updateOne(filter,updateDoc);
+      res.send(result)
+    })
+
     // plans
     app.get('/api/plans',async(req,res) =>{
       const query = {}
